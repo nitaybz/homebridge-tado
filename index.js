@@ -9,7 +9,7 @@ module.exports = function(homebridge) {
     Characteristic = homebridge.hap.Characteristic;
     Accessory = homebridge.hap.Accessory;
     HomebridgeAPI = homebridge;
-    homebridge.registerAccessory('homebridge-tado', 'TADO', TadoAccessory);
+    homebridge.registerAccessory('homebridge-tado-ac', 'TADO', TadoAccessory);
 }
 
 
