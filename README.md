@@ -11,16 +11,16 @@ Complies with ```Service.Thermostat```
 2. Install this plugin using: `npm install -g homebridge-tado`
 3. Update your configuration file. See `sample-config.json` in this repository for a sample.
 
-## Configuration
+**install from git (latest version): `sudo npm install -g https://github.com/ckuburlis/homebridge-tado.git`
 
-Configuration sample:
+## Config file
 
 ```
 "accessories": [
 {
   "accessory": "TADO",
   "name": "Tado",
-  "homeID": "homeID",
+  "homeID": 12345,
   "maxValue": 31,
   "minValue": 16,
   "zone": 1,
@@ -28,10 +28,27 @@ Configuration sample:
   "password": "XXXXX",
   "useFanSpeed": "AUTO",
   "useSwing": false,
+  "tadoMode": "MANUAL",
   "useFahrenheit": false
 }
 ]
 ```
+## Configuration
+
+|             Parameter            |                       Description                       | Required |  Default  |
+| -------------------------------- | ------------------------------------------------------- |:--------:|:---------:|
+| `accessory`                      | always "TADO"                                           |     ✓    |      -    |
+| `name`                           | name of the accessory                                   |     ✓    |      -    |
+| `homeID`                         | see below ```Finding HomeID```                          |     ✓    |      -    |
+| `maxValue`                       | Max temprature of your AC (in Tado app)                 |          |      31   |
+| `minValue`                       | Min temprature of your AC (in Tado app)                 |          |      16   |
+| `zone`                           | zone number of your Tado                                |          |      1    |
+| `username`                       | your tado account username (something@something.com)    |     ✓    |      -    |
+| `password`                       | your tado account password                              |     ✓    |      -    |
+| `useFanSpeed`                    | your AC settings on Tado app. can be "AUTO"/"LOW"/"MEDIUIM"/HIGH" or false for no fanspeed option         |         |      false    |
+| `useSwing`                       | your AC settings on Tado app. can be "ON"/"OFF" or false for no swing option  |          |     false    |
+| `tadoMode`                       | default mode for the commands to be sent with. can be "MANUAL" for manual control until ended by the user, or "TADO_MODE" for manual control until next schedule change in tado app .          |             |  "MANUAL" |
+| `useFahrenheit`                  | true for using Fahrenheit or false for Celsius          |     ✓    |      -    |
 
 ## Finding HomeID
 
