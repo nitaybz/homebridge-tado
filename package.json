@@ -1,28 +1,29 @@
 {
-  "name": "homebridge-tado",
+  "name": "homebridge-tado-ac",
   "version": "1.0.0",
-  "description": "Tado plugin for homebridge: https://github.com/nfarina/homebridge",
+  "description": "Tado AC Smart Control plugin for homebridge: https://github.com/nfarina/homebridge",
   "license": "MIT",
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "tado"
   ],
   "engines": {
     "node": ">=0.12.0",
     "homebridge": ">=0.2.0"
   },
-  "author": "Chris Kuburlis",
+  "author": "nitaybz",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ckuburlis/homebridge-tado.git"
+    "url": "git://github.com/nitaybz/homebridge-tado-ac.git"
   },
   "dependencies": {
     "object-assign": "^4.0.1",
     "node-persist": "0.0.8"
   },
   "bugs": {
-    "url": "https://github.com/ckuburlis/homebridge-tado/issues"
+    "url": "https://github.com/nitaybz/homebridge-tado-ac/issues"
   },
-  "homepage": "https://github.com/ckuburlis/homebridge-tado#readme",
+  "homepage": "https://github.com/nitaybz/homebridge-tado-ac#readme",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
