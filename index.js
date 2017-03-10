@@ -54,7 +54,12 @@ function TadoAccessory(log, config) {
             strData += chunk;
         });
         response.on('end', function() {
-            var tokenObj = JSON.parse(strData);
+            try {
+                var tokenObj = JSON.parse(strData);
+            }
+            catch(e){
+                accessory.log("couldn't retrieve new Token, error:" + e);
+            }
             var lastToken = accessory.storage.getItem('Tado_Token');
             if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
                 accessory.storage.setItem('Tado_Token', tokenObj.access_token);
@@ -67,7 +72,12 @@ function TadoAccessory(log, config) {
                     strData += chunk;
                 });
                 response.on('end', function() {
-                    var tokenObj = JSON.parse(strData);
+                    try {
+                        var tokenObj = JSON.parse(strData);
+                    }
+                    catch(e){
+                        accessory.log("couldn't retrieve new Token, error:" + e);
+                    }
                     var lastToken = accessory.storage.getItem('Tado_Token');
                     if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
                         accessory.storage.setItem('Tado_Token', tokenObj.access_token);
@@ -329,12 +339,18 @@ TadoAccessory.prototype.getCurrentTemperature = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
-            if (accessory.useFahrenheit) {
-                accessory.log("Room temperature is " + obj.sensorDataPoints.insideTemperature.fahrenheit + "ºF");
-                callback(null, obj.sensorDataPoints.insideTemperature.fahrenheit);
-            } else {
-                accessory.log("Room temperature is " + obj.sensorDataPoints.insideTemperature.celsius + "ºC");
-                callback(null, obj.sensorDataPoints.insideTemperature.celsius);
+            if ( !obj.sensorDataPoints.insideTemperature || obj.sensorDataPoints.insideTemperature == undefined) {
+                accessory.log("Couldn't retrieve current temperature");
+                callback(null);
+            }
+            else {
+                if (accessory.useFahrenheit) {
+                    accessory.log("Room temperature is " + obj.sensorDataPoints.insideTemperature.fahrenheit + "ºF");
+                    callback(null, obj.sensorDataPoints.insideTemperature.fahrenheit);
+                } else {
+                    accessory.log("Room temperature is " + obj.sensorDataPoints.insideTemperature.celsius + "ºC");
+                    callback(null, obj.sensorDataPoints.insideTemperature.celsius);
+                }
             }
         });
     });
