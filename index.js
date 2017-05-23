@@ -290,7 +290,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
             accessory._setOverlay(null);
             accessory.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, Characteristic.CurrentHeatingCoolingState.AUTO);  
     }
-            
+    
     else if (!state) {
         accessory.log("Set target state to off");
 
@@ -322,6 +322,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
                 break;
         }
     }
+    accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);        
     callback(null);
 }
 
