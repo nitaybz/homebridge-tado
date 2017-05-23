@@ -143,8 +143,8 @@ TadoAccessory.prototype.getServices = function() {
         })
         .on('get', this.getCurrentRelativeHumidity.bind(this));
 
-    this.service.addCharacteristic(Characteristic.On);
-    this.service.getCharacteristic(Characteristic.On)
+    this.service.addCharacteristic(Characteristic.On)
+        .on('get', this.getTargetHeatingCoolingState.bind(this))
         .on('set', this.setTargetHeatingCoolingState.bind(this));
 
     return [this.service];
@@ -255,6 +255,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     var accessory = this;
     accessory.lastTemp = accessory.storage.getItem(accessory.name + "_lastTemp");
     accessory.lastMode = accessory.storage.getItem(accessory.name);
+    accessory.log("accessory.lastMode(set)= " + accessory.lastMode);
     if (state == Characteristic.TargetHeatingCoolingState.OFF) {
         accessory.log("Set target state to off");
 
