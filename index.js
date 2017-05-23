@@ -256,8 +256,8 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     accessory.lastTemp = accessory.storage.getItem(accessory.name + "_lastTemp");
     accessory.lastMode = accessory.storage.getItem(accessory.name);
     accessory.log("accessory.lastMode(set)= " + accessory.lastMode);
-    accessory.log("state= " + state);
-    if (state == Characteristic.TargetHeatingCoolingState.OFF) {
+    accessory.log("State = " + state);
+    if (state === 0) {
         accessory.log("Set target state to off");
 
         var body = {
@@ -273,27 +273,27 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
         accessory._setOverlay(body);
     }  
     
-    else if (state == Characteristic.TargetHeatingCoolingState.HEAT) {
+    else if (state === 1) {
         accessory.log("Force heating");
         accessory.storage.setItem(accessory.name, "HEAT");
         accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
         //accessory._setTargetHeatingOverlay(accessory.lastTemp);
     }
 
-    else if (state == Characteristic.TargetHeatingCoolingState.COOL) {
+    else if (state === 2) {
             accessory.log("Force cooling");
             accessory.storage.setItem(accessory.name, "COOL");
             accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
             //accessory._setTargetCoolingOverlay(accessory.lastTemp);
     }
 
-    else if (state == Characteristic.TargetHeatingCoolingState.AUTO) {
+    else if (state === 3) {
             accessory.log("Automatic control");
             accessory._setOverlay(null);
             accessory.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, Characteristic.CurrentHeatingCoolingState.AUTO);  
     }
     
-    else if (!state) {
+    else if (state === false) {
         accessory.log("Set target state to off");
 
         var body = {
