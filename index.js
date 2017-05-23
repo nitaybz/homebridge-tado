@@ -322,7 +322,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
                 break;
         }
     }
-    accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);        
+          
     callback(null);
 }
 
@@ -495,6 +495,7 @@ TadoAccessory.prototype._setTargetCoolingOverlay = function(temp) {
         body.setting.swing = this.useSwing;
     }
     accessory.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, Characteristic.CurrentHeatingCoolingState.COOL);
+    accessory.service.setCharacteristic(Characteristic.TargetTemperature, temp); 
     this._setOverlay(body);
 }
 
@@ -524,6 +525,7 @@ TadoAccessory.prototype._setTargetHeatingOverlay = function(temp) {
         body.setting.swing = this.useSwing;
     }
     accessory.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, Characteristic.CurrentHeatingCoolingState.HEAT);
+    accessory.service.setCharacteristic(Characteristic.TargetTemperature, temp);  
     this._setOverlay(body);
 }
 
