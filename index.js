@@ -256,6 +256,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     accessory.lastTemp = accessory.storage.getItem(accessory.name + "_lastTemp");
     accessory.lastMode = accessory.storage.getItem(accessory.name);
     accessory.log("accessory.lastMode(set)= " + accessory.lastMode);
+    accessory.log("state= " + state);
     if (state == Characteristic.TargetHeatingCoolingState.OFF) {
         accessory.log("Set target state to off");
 
