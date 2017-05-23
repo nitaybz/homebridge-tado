@@ -308,17 +308,18 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     }
             
      else {
+         accessory.log("accessory.lastMode= " + accessory.lastMode);
         switch (accessory.lastMode) {
             case "HEAT":
-                accessory.log("Force heating");
-                accessory.storage.setItem(accessory.name, "HEAT");
+                accessory.log("Turn ON with Heating");
+                //accessory.storage.setItem(accessory.name, "HEAT");
                 // accessory._setTargetHeatingOverlay(accessory.lastTemp);
                 accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
                 break;
 
             case "COOL":
-                accessory.log("Force cooling");
-                accessory.storage.setItem(accessory.name, "COOL");
+                accessory.log("Turn ON with Cooling");
+                //accessory.storage.setItem(accessory.name, "COOL");
                 // accessory._setTargetCoolingOverlay(accessory.lastTemp);
                 accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
                 break;
@@ -397,6 +398,7 @@ TadoAccessory.prototype.setTargetTemperature = function(temp, callback) {
     if (temp !== null) {
         accessory.log("Set target temperature to " + temp + "º");
         accessory.storage.setItem(accessory.name + "_lastTemp", temp);
+        accessory.log("accessory.lastMode= " + accessory.lastMode);
         switch (accessory.lastMode) {
             case "COOL":
                 accessory._setTargetCoolingOverlay(temp);
