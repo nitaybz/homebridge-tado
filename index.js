@@ -255,8 +255,6 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     var accessory = this;
     accessory.lastTemp = accessory.storage.getItem(accessory.name + "_lastTemp");
     accessory.lastMode = accessory.storage.getItem(accessory.name);
-    accessory.log("accessory.lastMode(set)= " + accessory.lastMode);
-    accessory.log("State = " + state);
     if (state === 0) {
         accessory.log("Set target state to off");
 
@@ -310,7 +308,6 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     }
             
      else {
-         accessory.log("accessory.lastMode= " + accessory.lastMode);
         switch (accessory.lastMode) {
             case "HEAT":
                 accessory.log("Turn ON with Heating");
@@ -400,7 +397,6 @@ TadoAccessory.prototype.setTargetTemperature = function(temp, callback) {
     if (temp !== null) {
         accessory.log("Set target temperature to " + temp + "º");
         accessory.storage.setItem(accessory.name + "_lastTemp", temp);
-        accessory.log("accessory.lastMode= " + accessory.lastMode);
         switch (accessory.lastMode) {
             case "COOL":
                 accessory._setTargetCoolingOverlay(temp);
@@ -443,7 +439,7 @@ TadoAccessory.prototype.getCurrentRelativeHumidity = function(callback) {
 
 TadoAccessory.prototype._getCurrentStateResponse = function(callback) {
     var accessory = this;
-    accessory.log("Getting target state");
+    //accessory.log("Getting target state");
     var lastToken = accessory.storage.getItem('Tado_Token');
     var options = {
         host: 'my.tado.com',
@@ -457,7 +453,7 @@ TadoAccessory.prototype._getCurrentStateResponse = function(callback) {
 
 TadoAccessory.prototype._setOverlay = function(body) {
     var accessory = this;
-    accessory.log("Setting new overlay");
+    //accessory.log("Setting new overlay");
     var lastToken = accessory.storage.getItem('Tado_Token');
     var options = {
         host: 'my.tado.com',
@@ -470,7 +466,7 @@ TadoAccessory.prototype._setOverlay = function(body) {
     
     if (body != null) {
         body = JSON.stringify(body);
-        accessory.log("zone: " + accessory.zone + ",  body: " + body);
+        //accessory.log("zone: " + accessory.zone + ",  body: " + body);
     }
     
     https.request(options, null).end(body);  
