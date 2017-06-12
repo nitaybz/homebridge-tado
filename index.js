@@ -45,7 +45,7 @@ function TadoAccessory(log, config) {
     //Get Token
      var tokenOptions = {
             host: 'my.tado.com',
-            path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rt&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
+            path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
             method: 'POST'
     };
     https.request(tokenOptions, function(response){
