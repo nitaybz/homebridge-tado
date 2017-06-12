@@ -54,6 +54,7 @@ function TadoAccessory(log, config) {
             strData += chunk;
         });
         response.on('end', function() {
+            accessory.log("strData:" + strData);
             try {
                 var tokenObj = JSON.parse(strData);
             }
