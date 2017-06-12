@@ -45,7 +45,7 @@ function TadoAccessory(log, config) {
     //Get Token
      var tokenOptions = {
             host: 'my.tado.com',
-            path: '/oauth/token?client_id=tado-webapp&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
+            path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rt&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
             method: 'POST'
     };
     https.request(tokenOptions, function(response){
@@ -165,6 +165,7 @@ TadoAccessory.prototype.getCurrentHeatingCoolingState = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
+            accessory.log("obj = " + JSON.stringify(obj));
             accessory.log("Current zone mode is " + obj.setting.mode);
             accessory.log("Current power state is " + obj.setting.power);
             accessory.log("obj = " + JSON.stringify(obj));
