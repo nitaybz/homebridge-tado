@@ -264,6 +264,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
 
         var body = {
             "termination": {
+                projectedExpiry: null
             },
             "setting": {
                 "power": "OFF",
@@ -300,6 +301,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
 
         var body = {
             "termination": {
+                projectedExpiry: null
             },
             "setting": {
                 "power": "OFF",
@@ -482,6 +484,7 @@ TadoAccessory.prototype._setTargetCoolingOverlay = function(temp) {
     var accessory = this;
     var body = {
         "termination": {
+            projectedExpiry: null
         },
         "setting": {
             "power": "ON",
@@ -511,6 +514,7 @@ TadoAccessory.prototype._setTargetHeatingOverlay = function(temp) {
     var accessory = this;
     var body = {
         "termination": {
+            projectedExpiry: null
         },
         "setting": {
             "power": "ON",
