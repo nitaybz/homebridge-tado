@@ -45,7 +45,7 @@ function TadoAccessory(log, config) {
     //Get Token
      var tokenOptions = {
             host: 'my.tado.com',
-            path: '/oauth/token?client_id=tado-webapp&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
+            path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
             method: 'POST'
     };
     https.request(tokenOptions, function(response){
@@ -54,6 +54,7 @@ function TadoAccessory(log, config) {
             strData += chunk;
         });
         response.on('end', function() {
+            //accessory.log("strData:" + strData);
             try {
                 var tokenObj = JSON.parse(strData);
             }
@@ -164,16 +165,19 @@ TadoAccessory.prototype.getCurrentHeatingCoolingState = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
+            //accessory.log("obj = " + JSON.stringify(obj));
             accessory.log("Current zone mode is " + obj.setting.mode);
             accessory.log("Current power state is " + obj.setting.power);
+            //accessory.log("obj = " + JSON.stringify(obj));
+            if (obj != null && obj.setting != null) {
+                accessory.zoneMode = obj.setting.mode;
 
-            accessory.zoneMode = obj.setting.mode;
-
-            if (obj.setting.temperature != null) {
-                if (accessory.useFahrenheit) {
-                    accessory.log("Target temperature is " + obj.setting.temperature.fahrenheit + "ºF");
-                } else {
-                    accessory.log("Target temperature is " + obj.setting.temperature.celsius + "ºC");
+                if (obj.setting.temperature != null) {
+                    if (accessory.useFahrenheit) {
+                        accessory.log("Target temperature is " + obj.setting.temperature.fahrenheit + "ºF");
+                    } else {
+                        accessory.log("Target temperature is " + obj.setting.temperature.celsius + "ºC");
+                    }
                 }
             }
             if (JSON.stringify(obj.setting.power).match("OFF")) {
@@ -216,8 +220,8 @@ TadoAccessory.prototype.getTargetHeatingCoolingState = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
-
-            if (obj.setting.temperature != null) {
+            //accessory.log("obj = " + JSON.stringify(obj));
+            if (obj != null && obj.setting != null && obj.setting.temperature != null) {
                 if (accessory.useFahrenheit) {
                     accessory.log("Target temperature is " + obj.setting.temperature.fahrenheit + "ºF");
                 } else {
@@ -342,7 +346,8 @@ TadoAccessory.prototype.getCurrentTemperature = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
-            if ( !obj.sensorDataPoints.insideTemperature || obj.sensorDataPoints.insideTemperature == undefined) {
+            //accessory.log("obj = " + JSON.stringify(obj));
+            if ( !obj.sensorDataPoints  == undefined || !obj.sensorDataPoints.insideTemperature || obj.sensorDataPoints.insideTemperature == undefined) {
                 accessory.log("Couldn't retrieve current temperature");
                 callback(null);
             }
@@ -373,6 +378,7 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
+            //accessory.log("obj = " + JSON.stringify(obj));
             if (obj.setting.temperature == null) {
                     accessory.log("Target temperature is unavailable");
                     callback(null, null);
