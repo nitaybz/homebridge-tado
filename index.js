@@ -148,7 +148,7 @@ TadoAccessory.prototype.getServices = function() {
         .on('get', this.getTargetHeatingCoolingState.bind(this))
         .on('set', this.setTargetHeatingCoolingState.bind(this));
 
-    return [this.service];
+    return [informationService, this.service];
 }
 
 TadoAccessory.prototype.getCurrentHeatingCoolingState = function(callback) {
