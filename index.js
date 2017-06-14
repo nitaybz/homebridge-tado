@@ -48,46 +48,49 @@ function TadoAccessory(log, config) {
             path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
             method: 'POST'
     };
-    https.request(tokenOptions, function(response){
-        var strData = '';
-        response.on('data', function(chunk) {
-            strData += chunk;
-        });
-        response.on('end', function() {
-            accessory.log("strData:" + strData);
-            try {
-                var tokenObj = JSON.parse(strData);
-            }
-            catch(e){
-                accessory.log("couldn't retrieve new Token, error:" + e);
-            }
-            var lastToken = accessory.storage.getItem('Tado_Token');
-            if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
-                accessory.storage.setItem('Tado_Token', tokenObj.access_token);
-            }
-        });
-        setInterval(function(response){
-            https.request(tokenOptions, function(response){
-                var strData = '';
-                response.on('data', function(chunk) {
-                    strData += chunk;
-                });
-                response.on('end', function() {
-                    accessory.log("strData:" + strData);
-                    try {
-                        var tokenObj = JSON.parse(strData);
-                    }
-                    catch(e){
-                        accessory.log("couldn't retrieve new Token, error:" + e);
-                    }
-                    var lastToken = accessory.storage.getItem('Tado_Token');
-                    if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
-                        accessory.storage.setItem('Tado_Token', tokenObj.access_token);
-                    }
-                });
-            }).end();
-        }, 500000)
-    }).end();
+    setTimeout(function(){
+        https.request(tokenOptions, function(response){
+            var strData = '';
+            response.on('data', function(chunk) {
+                strData += chunk;
+            });
+            response.on('end', function() {
+                accessory.log("strData:" + strData);
+                try {
+                    var tokenObj = JSON.parse(strData);
+                }
+                catch(e){
+                    accessory.log("couldn't retrieve new Token, error:" + e);
+                }
+                var lastToken = accessory.storage.getItem('Tado_Token');
+                if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
+                    accessory.storage.setItem('Tado_Token', tokenObj.access_token);
+                }
+            });
+            setInterval(function(response){
+                https.request(tokenOptions, function(response){
+                    var strData = '';
+                    response.on('data', function(chunk) {
+                        strData += chunk;
+                    });
+                    response.on('end', function() {
+                        accessory.log("strData:" + strData);
+                        try {
+                            var tokenObj = JSON.parse(strData);
+                        }
+                        catch(e){
+                            accessory.log("couldn't retrieve new Token, error:" + e);
+                        }
+                        var lastToken = accessory.storage.getItem('Tado_Token');
+                        if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
+                            accessory.storage.setItem('Tado_Token', tokenObj.access_token);
+                        }
+                    });
+                }).end();
+            }, (500000 + Math.floor(Math.random() * 1000) + 1))
+        }).end();
+    }, Math.floor(Math.random() * 1000) + 1)
+    
 }
 
 TadoAccessory.prototype.getServices = function() {
