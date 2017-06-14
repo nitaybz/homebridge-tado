@@ -347,7 +347,7 @@ TadoAccessory.prototype.getCurrentTemperature = function(callback) {
         response.on('end', function() {
             var obj = JSON.parse(str);
             //accessory.log("obj = " + JSON.stringify(obj));
-            if ( !obj.sensorDataPoints  == undefined || !obj.sensorDataPoints.insideTemperature || obj.sensorDataPoints.insideTemperature == undefined) {
+            if ( obj.sensorDataPoints  == undefined || !obj.sensorDataPoints.insideTemperature || obj.sensorDataPoints.insideTemperature == undefined) {
                 accessory.log("Couldn't retrieve current temperature");
                 callback(null);
             }
