@@ -358,7 +358,7 @@ TadoAccessory.prototype.getCurrentTemperature = function(callback) {
             else {
                 if (accessory.useFahrenheit) {
                     accessory.log("Room temperature is " + obj.sensorDataPoints.insideTemperature.fahrenheit + "ºF");
-                    callback(null, obj.sensorDataPoints.insideTemperature.fahrenheit);
+                    callback(null, obj.sensorDataPoints.insideTemperature.celsius);
                 } else {
                     accessory.log("Room temperature is " + obj.sensorDataPoints.insideTemperature.celsius + "ºC");
                     callback(null, obj.sensorDataPoints.insideTemperature.celsius);
@@ -391,7 +391,7 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
             else if (accessory.useFahrenheit) {
                     accessory.log("Target temperature is " + obj.setting.temperature.fahrenheit + "ºF");
                     accessory.storage.setItem(accessory.name + "_lastTemp", obj.setting.temperature.fahrenheit);
-                    callback(null, obj.setting.temperature.fahrenheit);
+                    callback(null, obj.setting.temperature.celsius);
             } else {
                     accessory.log("Target temperature is " + obj.setting.temperature.celsius + "ºC");
                     accessory.storage.setItem(accessory.name + "_lastTemp", obj.setting.temperature.celsius);
