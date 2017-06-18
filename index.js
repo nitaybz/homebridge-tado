@@ -20,7 +20,7 @@ function TadoAccessory(log, config) {
     this.name = config['name'];
     this.homeID = config['homeID'];
     this.username = config['username'];
-    this.password = config['password'];
+    this.password = encodeURIComponent(config['password']);
     this.zone = config['zone'] || 1;
     this.maxValue = config['maxValue'] || 31;
     this.minValue = config['minValue'] || 16;
@@ -54,7 +54,7 @@ function TadoAccessory(log, config) {
             strData += chunk;
         });
         response.on('end', function() {
-            accessory.log("strData:" + strData);
+            //accessory.log("strData:" + strData);
             try {
                 var tokenObj = JSON.parse(strData);
             }
@@ -165,7 +165,7 @@ TadoAccessory.prototype.getCurrentHeatingCoolingState = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
-            accessory.log("obj = " + JSON.stringify(obj));
+            //accessory.log("obj = " + JSON.stringify(obj));
             accessory.log("Current zone mode is " + obj.setting.mode);
             accessory.log("Current power state is " + obj.setting.power);
             if (obj != null && obj.setting != null) {
@@ -221,7 +221,7 @@ TadoAccessory.prototype.getTargetHeatingCoolingState = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
-            accessory.log("obj = " + JSON.stringify(obj));
+            //accessory.log("obj = " + JSON.stringify(obj));
             if (obj != null && obj.setting != null && obj.setting.temperature != null) {
                 if (accessory.useFahrenheit) {
                     accessory.log("Target temperature is " + obj.setting.temperature.fahrenheit + "ºF");
@@ -347,7 +347,7 @@ TadoAccessory.prototype.getCurrentTemperature = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
-            accessory.log("obj = " + JSON.stringify(obj));
+            //accessory.log("obj = " + JSON.stringify(obj));
             if ( !obj.sensorDataPoints.insideTemperature || obj.sensorDataPoints.insideTemperature == undefined) {
                 accessory.log("Couldn't retrieve current temperature");
                 callback(null);
@@ -379,7 +379,7 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
         //the whole response has been recieved, so we just print it out here
         response.on('end', function() {
             var obj = JSON.parse(str);
-            accessory.log("obj = " + JSON.stringify(obj));
+            //accessory.log("obj = " + JSON.stringify(obj));
             if (obj.setting.temperature == null) {
                     accessory.log("Target temperature is unavailable");
                     callback(null, null);
