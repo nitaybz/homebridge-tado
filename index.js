@@ -386,7 +386,7 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
             //accessory.log("obj = " + JSON.stringify(obj));
             if (obj.setting == undefined || obj.setting.temperature == null) {
                     accessory.log("Target temperature is unavailable");
-                    callback(null, null);
+                    callback(null, 0);
                     return;
             }
             else if (accessory.useFahrenheit) {
