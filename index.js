@@ -20,7 +20,7 @@ function TadoAccessory(log, config) {
     this.name = config['name'];
     this.homeID = config['homeID'];
     this.username = config['username'];
-    this.password = config['password'];
+    this.password = encodeURIComponent(config['password']);
     this.zone = config['zone'] || 1;
     this.maxValue = config['maxValue'] || 31;
     this.minValue = config['minValue'] || 16;
@@ -45,7 +45,7 @@ function TadoAccessory(log, config) {
     //Get Token
      var tokenOptions = {
             host: 'my.tado.com',
-            path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc&grant_type=password&password=' + encodeURI(this.password) + '&scope=home.user&username=' + this.username,
+            path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
             method: 'POST'
     };
     setTimeout(function(){
