@@ -199,6 +199,8 @@ TadoAccessory.prototype.getCurrentHeatingCoolingState = function(callback) {
                             accessory.storage.setItem(accessory.name, "COOL");                            
                         };
                         callback(null, Characteristic.CurrentHeatingCoolingState.COOL);
+                    } else {
+                        callback(null, Characteristic.CurrentHeatingCoolingState.AUTO);
                     }
             }
         });
