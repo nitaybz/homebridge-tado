@@ -241,6 +241,8 @@ TadoAccessory.prototype.getTargetHeatingCoolingState = function(callback) {
                         callback(null, Characteristic.TargetHeatingCoolingState.HEAT);
                     } else if (JSON.stringify(obj.setting.mode).match("COOL")) {
                         callback(null, Characteristic.TargetHeatingCoolingState.COOL);
+                    } else {
+                        callback(null, Characteristic.CurrentHeatingCoolingState.AUTO);
                     }
             } 
             else {
@@ -250,6 +252,8 @@ TadoAccessory.prototype.getTargetHeatingCoolingState = function(callback) {
                     } 
                     else if (JSON.stringify(obj.setting.mode).match("COOL")) {
                         callback(null, Characteristic.TargetHeatingCoolingState.COOL);
+                    } else {
+                        callback(null, Characteristic.CurrentHeatingCoolingState.AUTO);
                     }
             }
         });
@@ -380,7 +384,7 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
         response.on('end', function() {
             var obj = JSON.parse(str);
             //accessory.log("obj = " + JSON.stringify(obj));
-            if (obj.setting.temperature == null) {
+            if (obj.setting == undefined || obj.setting.temperature == null) {
                     accessory.log("Target temperature is unavailable");
                     callback(null, null);
                     return;
