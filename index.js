@@ -9,7 +9,7 @@ module.exports = function(homebridge) {
     Characteristic = homebridge.hap.Characteristic;
     Accessory = homebridge.hap.Accessory;
     HomebridgeAPI = homebridge;
-    homebridge.registerAccessory('homebridge-tado-ac', 'TADO', TadoAccessory);
+    homebridge.registerAccessory('homebridge-simple-ac', 'simpleAC', TadoAccessory);
 }
 
 
@@ -18,75 +18,76 @@ function TadoAccessory(log, config) {
     this.log = log;
     this.storage = require('node-persist');
     this.name = config['name'];
-    this.homeID = config['homeID'];
-    this.username = config['username'];
-    this.password = encodeURIComponent(config['password']);
-    this.zone = config['zone'] || 1;
+    //this.homeID = config['homeID'];
+    //this.username = config['username'];
+    //this.password = encodeURIComponent(config['password']);
+    //this.zone = config['zone'] || 1;
     this.maxValue = config['maxValue'] || 31;
     this.minValue = config['minValue'] || 16;
-    this.useFahrenheit = config['useFahrenheit'];
-    this.useSwing = config['useSwing'] || false; // can get values: "ON" or "OFF"
-    this.useFanSpeed = config['useFanSpeed'] || false; // can get values: "LOW", "MIDDLE", "HIGH" or "AUTO" depend on your aircon
-    this.tadoMode = config['tadoMode'] || "MANUAL";
-    this.zoneMode = "UNKNOWN";
+    //this.useFahrenheit = config['useFahrenheit'];
+    //this.useSwing = config['useSwing'] || false; // can get values: "ON" or "OFF"
+    //this.useFanSpeed = config['useFanSpeed'] || false; // can get values: "LOW", "MIDDLE", "HIGH" or "AUTO" depend on your aircon
+    //this.tadoMode = config['tadoMode'] || "MANUAL";
+    //this.zoneMode = "UNKNOWN";
     
     //Init storage
       this.storage.initSync({
         dir: HomebridgeAPI.user.persistPath()
       });
-    this.lastMode = this.storage.getItem(this.name) || "";
-    this.lastTemp = this.storage.getItem(this.name + "_lastTemp");
-    if (!this.lastTemp) {
-        this.storage.setItem(this.name + "_lastTemp", 25);
-        this.lastTemp = 25;
-    }
+      
+    // this.lastMode = this.storage.getItem(this.name) || "";
+    // this.lastTemp = this.storage.getItem(this.name + "_lastTemp");
+    // if (!this.lastTemp) {
+    //     this.storage.setItem(this.name + "_lastTemp", 25);
+    //     this.lastTemp = 25;
+    // }
    
     
     //Get Token
-     var tokenOptions = {
-            host: 'my.tado.com',
-            path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
-            method: 'POST'
-    };
-    https.request(tokenOptions, function(response){
-        var strData = '';
-        response.on('data', function(chunk) {
-            strData += chunk;
-        });
-        response.on('end', function() {
-            //accessory.log("strData:" + strData);
-            try {
-                var tokenObj = JSON.parse(strData);
-            }
-            catch(e){
-                accessory.log("couldn't retrieve new Token, error:" + e);
-            }
-            var lastToken = accessory.storage.getItem('Tado_Token');
-            if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
-                accessory.storage.setItem('Tado_Token', tokenObj.access_token);
-            }
-        });
-        setInterval(function(response){
-            https.request(tokenOptions, function(response){
-                var strData = '';
-                response.on('data', function(chunk) {
-                    strData += chunk;
-                });
-                response.on('end', function() {
-                    try {
-                        var tokenObj = JSON.parse(strData);
-                    }
-                    catch(e){
-                        accessory.log("couldn't retrieve new Token, error:" + e);
-                    }
-                    var lastToken = accessory.storage.getItem('Tado_Token');
-                    if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
-                        accessory.storage.setItem('Tado_Token', tokenObj.access_token);
-                    }
-                });
-            }).end();
-        }, 500000)
-    }).end();
+    //  var tokenOptions = {
+    //         host: 'my.tado.com',
+    //         path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
+    //         method: 'POST'
+    // };
+    // https.request(tokenOptions, function(response){
+    //     var strData = '';
+    //     response.on('data', function(chunk) {
+    //         strData += chunk;
+    //     });
+    //     response.on('end', function() {
+    //         //accessory.log("strData:" + strData);
+    //         try {
+    //             var tokenObj = JSON.parse(strData);
+    //         }
+    //         catch(e){
+    //             accessory.log("couldn't retrieve new Token, error:" + e);
+    //         }
+    //         var lastToken = accessory.storage.getItem('Tado_Token');
+    //         if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
+    //             accessory.storage.setItem('Tado_Token', tokenObj.access_token);
+    //         }
+    //     });
+    //     setInterval(function(response){
+    //         https.request(tokenOptions, function(response){
+    //             var strData = '';
+    //             response.on('data', function(chunk) {
+    //                 strData += chunk;
+    //             });
+    //             response.on('end', function() {
+    //                 try {
+    //                     var tokenObj = JSON.parse(strData);
+    //                 }
+    //                 catch(e){
+    //                     accessory.log("couldn't retrieve new Token, error:" + e);
+    //                 }
+    //                 var lastToken = accessory.storage.getItem('Tado_Token');
+    //                 if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
+    //                     accessory.storage.setItem('Tado_Token', tokenObj.access_token);
+    //                 }
+    //             });
+    //         }).end();
+    //     }, 500000)
+    // }).end();
 }
 
 TadoAccessory.prototype.getServices = function() {
@@ -94,27 +95,27 @@ TadoAccessory.prototype.getServices = function() {
     var minValue = accessory.minValue;
     var maxValue = accessory.maxValue;
 
-    if (this.useFahrenheit) {
-        minValue = accessory.minValue;
-        maxValue = accessory.maxValue;
-    }
+    // if (this.useFahrenheit) {
+    //     minValue = accessory.minValue;
+    //     maxValue = accessory.maxValue;
+    // }
 
     this.log("Minimum setpoint " + minValue);
     this.log("Maximum setpoint " + maxValue);
 
     var informationService = new Service.AccessoryInformation()
         .setCharacteristic(Characteristic.Manufacturer, 'Tado GmbH')
-        .setCharacteristic(Characteristic.Model, 'Tado Smart Heating / AC Control')
+        .setCharacteristic(Characteristic.Model, 'Tado Smart AC Control')
         .setCharacteristic(Characteristic.SerialNumber, 'Tado Serial Number');
 
-    this.service = new Service.Thermostat(this.name);
+    this.service = new Service.HeaterCooler(this.name);
         
-    this.service.getCharacteristic(Characteristic.CurrentHeatingCoolingState)
-        .on('get', this.getCurrentHeatingCoolingState.bind(this));
+    this.service.getCharacteristic(Characteristic.CurrentHeaterCoolerState)
+        .on('get', this.getFalseCallback.bind(this));
 
-    this.service.getCharacteristic(Characteristic.TargetHeatingCoolingState)
-        .on('get', this.getTargetHeatingCoolingState.bind(this))
-        .on('set', this.setTargetHeatingCoolingState.bind(this));
+    this.service.getCharacteristic(Characteristic.TargetHeaterCoolerState)
+        .on('get', this.getFalseCallback.bind(this))
+        .on('set', this.setFalseCallback.bind(this));
 
     this.service.getCharacteristic(Characteristic.CurrentTemperature)
         .setProps({
@@ -122,7 +123,7 @@ TadoAccessory.prototype.getServices = function() {
             maxValue: 100,
             minStep: 0.01
         })
-        .on('get', this.getCurrentTemperature.bind(this));
+        .on('get', this.getFalseCallback.bind(this));
 
     this.service.getCharacteristic(Characteristic.TargetTemperature)
         .setProps({
@@ -130,11 +131,11 @@ TadoAccessory.prototype.getServices = function() {
             maxValue: maxValue,
             minStep: 1
         })
-        .on('get', this.getTargetTemperature.bind(this))
-        .on('set', this.setTargetTemperature.bind(this));
+        .on('get', this.getFalseCallback.bind(this))
+        .on('set', this.setFalseCallback.bind(this));
 
     this.service.getCharacteristic(Characteristic.TemperatureDisplayUnits)
-        .on('get', this.getTemperatureDisplayUnits.bind(this));
+        .on('get', this.getFalseCallback.bind(this));
 
     this.service.getCharacteristic(Characteristic.CurrentRelativeHumidity)
         .setProps({
@@ -142,13 +143,34 @@ TadoAccessory.prototype.getServices = function() {
             maxValue: 100,
             minStep: 0.01
         })
-        .on('get', this.getCurrentRelativeHumidity.bind(this));
+        .on('get', this.getFalseCallback.bind(this));
 
+    this.service.getCharacteristic(Characteristic.SwingMode)
+        .on('get', this.getFalseCallback.bind(this))
+        .on('set', this.setFalseCallback.bind(this));
+
+    this.service.getCharacteristic(Characteristic.RotationSpeed)
+        .setProps({
+                minValue: 0,
+                maxValue: 3,
+                minStep: 1
+            })
+        .on('get', this.getFalseCallback.bind(this))
+        .on('set', this.setFalseCallback.bind(this));
+        
     this.service.addCharacteristic(Characteristic.On)
-        .on('get', this.getTargetHeatingCoolingState.bind(this))
-        .on('set', this.setTargetHeatingCoolingState.bind(this));
+        .on('get', this.getFalseCallback.bind(this))
+        .on('set', this.setFalseCallback.bind(this));
 
     return [informationService, this.service];
+}
+
+TadoAccessory.prototype.getFalseCallback = function(callback) {
+ callback (null, null)
+}
+
+TadoAccessory.prototype.setFalseCallback = function(state, callback) {
+ callback (null, state)
 }
 
 TadoAccessory.prototype.getCurrentHeatingCoolingState = function(callback) {
@@ -259,6 +281,8 @@ TadoAccessory.prototype.getTargetHeatingCoolingState = function(callback) {
         });
     });      
 }
+
+
 
 TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback) {
     var accessory = this;
