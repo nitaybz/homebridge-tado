@@ -95,8 +95,8 @@ TadoAccessory.prototype.getServices = function() {
     var maxValue = accessory.maxValue;
 
     if (this.useFahrenheit) {
-        minValue = accessory.minValue;
-        maxValue = accessory.maxValue;
+        minValue = (accessory.minValue - 32) * 5 / 9;
+        maxValue = (accessory.maxValue - 32) * 5 / 9;
     }
 
     this.log("Minimum setpoint " + minValue);
