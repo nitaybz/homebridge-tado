@@ -287,14 +287,22 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     else if (state === 1) {
         accessory.log("Force heating");
         accessory.storage.setItem(accessory.name, "HEAT");
-        accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
+        if (accessory.useFahrenheit){
+            accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
+        } else {
+            accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
+        }
         //accessory._setTargetHeatingOverlay(accessory.lastTemp);
     }
 
     else if (state === 2) {
             accessory.log("Force cooling");
             accessory.storage.setItem(accessory.name, "COOL");
-            accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
+            if (accessory.useFahrenheit){
+                accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
+            } else {
+                accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
+            }
             //accessory._setTargetCoolingOverlay(accessory.lastTemp);
     }
 
@@ -326,14 +334,22 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
                 accessory.log("Turn ON with Heating");
                 //accessory.storage.setItem(accessory.name, "HEAT");
                 // accessory._setTargetHeatingOverlay(accessory.lastTemp);
-                accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
+                if (accessory.useFahrenheit){
+                    accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
+                } else {
+                    accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
+                }
                 break;
 
             case "COOL":
                 accessory.log("Turn ON with Cooling");
                 //accessory.storage.setItem(accessory.name, "COOL");
                 // accessory._setTargetCoolingOverlay(accessory.lastTemp);
-                accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
+                if (accessory.useFahrenheit){
+                    accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
+                } else {
+                    accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
+                }
                 break;
         }
     }
