@@ -38,6 +38,9 @@ function TadoAccessory(log, config) {
     this.lastTemp = this.storage.getItem(this.name + "_lastTemp");
     if (!this.lastTemp) {
         this.lastTemp = 25;
+        if (this.fahrenheit){
+            this.lastTemp = 77;
+        }
         this.storage.setItem(this.name + "_lastTemp", this.lastTemp);
     }
    
@@ -284,14 +287,14 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     else if (state === 1) {
         accessory.log("Force heating");
         accessory.storage.setItem(accessory.name, "HEAT");
-        accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
+        accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
         //accessory._setTargetHeatingOverlay(accessory.lastTemp);
     }
 
     else if (state === 2) {
             accessory.log("Force cooling");
             accessory.storage.setItem(accessory.name, "COOL");
-            accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
+            accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
             //accessory._setTargetCoolingOverlay(accessory.lastTemp);
     }
 
@@ -323,14 +326,14 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
                 accessory.log("Turn ON with Heating");
                 //accessory.storage.setItem(accessory.name, "HEAT");
                 // accessory._setTargetHeatingOverlay(accessory.lastTemp);
-                accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
+                accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
                 break;
 
             case "COOL":
                 accessory.log("Turn ON with Cooling");
                 //accessory.storage.setItem(accessory.name, "COOL");
                 // accessory._setTargetCoolingOverlay(accessory.lastTemp);
-                accessory.service.setCharacteristic(Characteristic.TargetTemperature, accessory.lastTemp);
+                accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
                 break;
         }
     }
@@ -392,7 +395,7 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
             }
             else if (accessory.useFahrenheit) {
                     accessory.log("Target temperature is " + obj.setting.temperature.fahrenheit + "ºF");
-                    accessory.storage.setItem(accessory.name + "_lastTemp", obj.setting.temperature.celsius);
+                    accessory.storage.setItem(accessory.name + "_lastTemp", obj.setting.temperature.fahrenheit);
                     callback(null, obj.setting.temperature.celsius);
             } else {
                     accessory.log("Target temperature is " + obj.setting.temperature.celsius + "ºC");
