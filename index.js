@@ -38,9 +38,6 @@ function TadoAccessory(log, config) {
     this.lastTemp = this.storage.getItem(this.name + "_lastTemp");
     if (!this.lastTemp) {
         this.lastTemp = 25;
-        if (this.useFahrenheit) {
-            this.lastTemp = 25 * 9 / 5 + 32;
-        }
         this.storage.setItem(this.name + "_lastTemp", this.lastTemp);
     }
    
