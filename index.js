@@ -37,9 +37,11 @@ function TadoAccessory(log, config) {
     this.lastMode = this.storage.getItem(this.name) || "";
     this.lastTemp = this.storage.getItem(this.name + "_lastTemp");
     if (!this.lastTemp) {
-        this.lastTemp = 25;
-        if (this.fahrenheit){
+        
+        if (this.useFahrenheit){
             this.lastTemp = 77;
+        } else {
+            this.lastTemp = 25;
         }
         this.storage.setItem(this.name + "_lastTemp", this.lastTemp);
     }
