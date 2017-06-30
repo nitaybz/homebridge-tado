@@ -37,8 +37,8 @@ function TadoAccessory(log, config) {
     this.lastMode = this.storage.getItem(this.name) || "";
     this.lastTemp = this.storage.getItem(this.name + "_lastTemp");
     if (!this.lastTemp) {
-        this.storage.setItem(this.name + "_lastTemp", 25);
         this.lastTemp = 25;
+        this.storage.setItem(this.name + "_lastTemp", this.lastTemp);
     }
    
     
@@ -48,49 +48,45 @@ function TadoAccessory(log, config) {
             path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
             method: 'POST'
     };
-    setTimeout(function(){
-        https.request(tokenOptions, function(response){
-            var strData = '';
-            response.on('data', function(chunk) {
-                strData += chunk;
-            });
-            response.on('end', function() {
-                accessory.log("strData:" + strData);
-                try {
-                    var tokenObj = JSON.parse(strData);
-                }
-                catch(e){
-                    accessory.log("couldn't retrieve new Token, error:" + e);
-                }
-                var lastToken = accessory.storage.getItem('Tado_Token');
-                if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
-                    accessory.storage.setItem('Tado_Token', tokenObj.access_token);
-                }
-            });
-            setInterval(function(response){
-                https.request(tokenOptions, function(response){
-                    var strData = '';
-                    response.on('data', function(chunk) {
-                        strData += chunk;
-                    });
-                    response.on('end', function() {
-                        accessory.log("strData:" + strData);
-                        try {
-                            var tokenObj = JSON.parse(strData);
-                        }
-                        catch(e){
-                            accessory.log("couldn't retrieve new Token, error:" + e);
-                        }
-                        var lastToken = accessory.storage.getItem('Tado_Token');
-                        if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
-                            accessory.storage.setItem('Tado_Token', tokenObj.access_token);
-                        }
-                    });
-                }).end();
-            }, (500000 + Math.floor(Math.random() * 1000) + 1))
-        }).end();
-    }, Math.floor(Math.random() * 1000) + 1)
-    
+    https.request(tokenOptions, function(response){
+        var strData = '';
+        response.on('data', function(chunk) {
+            strData += chunk;
+        });
+        response.on('end', function() {
+            //accessory.log("strData:" + strData);
+            try {
+                var tokenObj = JSON.parse(strData);
+            }
+            catch(e){
+                accessory.log("couldn't retrieve new Token, error:" + e);
+            }
+            var lastToken = accessory.storage.getItem('Tado_Token');
+            if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
+                accessory.storage.setItem('Tado_Token', tokenObj.access_token);
+            }
+        });
+        setInterval(function(response){
+            https.request(tokenOptions, function(response){
+                var strData = '';
+                response.on('data', function(chunk) {
+                    strData += chunk;
+                });
+                response.on('end', function() {
+                    try {
+                        var tokenObj = JSON.parse(strData);
+                    }
+                    catch(e){
+                        accessory.log("couldn't retrieve new Token, error:" + e);
+                    }
+                    var lastToken = accessory.storage.getItem('Tado_Token');
+                    if (lastToken !== tokenObj.access_token && tokenObj.access_token !== undefined) {
+                        accessory.storage.setItem('Tado_Token', tokenObj.access_token);
+                    }
+                });
+            }).end();
+        }, 500000)
+    }).end();
 }
 
 TadoAccessory.prototype.getServices = function() {
@@ -98,13 +94,14 @@ TadoAccessory.prototype.getServices = function() {
     var minValue = accessory.minValue;
     var maxValue = accessory.maxValue;
 
-    if (this.useFahrenheit) {
-        minValue = accessory.minValue;
-        maxValue = accessory.maxValue;
-    }
 
     this.log("Minimum setpoint " + minValue);
     this.log("Maximum setpoint " + maxValue);
+
+    if (this.useFahrenheit) {
+        minValue = (accessory.minValue - 32) * 5 / 9;
+        maxValue = (accessory.maxValue - 32) * 5 / 9;
+    }
 
     var informationService = new Service.AccessoryInformation()
         .setCharacteristic(Characteristic.Manufacturer, 'Tado GmbH')
@@ -172,7 +169,6 @@ TadoAccessory.prototype.getCurrentHeatingCoolingState = function(callback) {
             accessory.log("obj = " + JSON.stringify(obj));
             accessory.log("Current zone mode is " + obj.setting.mode);
             accessory.log("Current power state is " + obj.setting.power);
-            //accessory.log("obj = " + JSON.stringify(obj));
             if (obj != null && obj.setting != null) {
                 accessory.zoneMode = obj.setting.mode;
 
@@ -204,6 +200,8 @@ TadoAccessory.prototype.getCurrentHeatingCoolingState = function(callback) {
                             accessory.storage.setItem(accessory.name, "COOL");                            
                         };
                         callback(null, Characteristic.CurrentHeatingCoolingState.COOL);
+                    } else {
+                        callback(null, Characteristic.CurrentHeatingCoolingState.OFF);
                     }
             }
         });
@@ -244,6 +242,8 @@ TadoAccessory.prototype.getTargetHeatingCoolingState = function(callback) {
                         callback(null, Characteristic.TargetHeatingCoolingState.HEAT);
                     } else if (JSON.stringify(obj.setting.mode).match("COOL")) {
                         callback(null, Characteristic.TargetHeatingCoolingState.COOL);
+                    } else {
+                        callback(null, Characteristic.CurrentHeatingCoolingState.OFF);
                     }
             } 
             else {
@@ -253,6 +253,8 @@ TadoAccessory.prototype.getTargetHeatingCoolingState = function(callback) {
                     } 
                     else if (JSON.stringify(obj.setting.mode).match("COOL")) {
                         callback(null, Characteristic.TargetHeatingCoolingState.COOL);
+                    } else {
+                        callback(null, Characteristic.CurrentHeatingCoolingState.OFF);
                     }
             }
         });
@@ -351,7 +353,7 @@ TadoAccessory.prototype.getCurrentTemperature = function(callback) {
         response.on('end', function() {
             var obj = JSON.parse(str);
             accessory.log("obj = " + JSON.stringify(obj));
-            if ( !obj.sensorDataPoints  == undefined || !obj.sensorDataPoints.insideTemperature || obj.sensorDataPoints.insideTemperature == undefined) {
+            if ( !obj.sensorDataPoints.insideTemperature || obj.sensorDataPoints.insideTemperature == undefined) {
                 accessory.log("Couldn't retrieve current temperature");
                 callback(null);
             }
@@ -390,7 +392,7 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
             }
             else if (accessory.useFahrenheit) {
                     accessory.log("Target temperature is " + obj.setting.temperature.fahrenheit + "ºF");
-                    accessory.storage.setItem(accessory.name + "_lastTemp", obj.setting.temperature.fahrenheit);
+                    accessory.storage.setItem(accessory.name + "_lastTemp", obj.setting.temperature.celsius);
                     callback(null, obj.setting.temperature.celsius);
             } else {
                     accessory.log("Target temperature is " + obj.setting.temperature.celsius + "ºC");
@@ -495,11 +497,11 @@ TadoAccessory.prototype._setTargetCoolingOverlay = function(temp) {
         } 
     };
     body.termination.type = this.tadoMode;
-    if (this.useFahrenheit) {
-        body.setting.temperature.fahrenheit = temp;
-    } else {
+    // if (this.useFahrenheit) {
+    //     body.setting.temperature.celsius = temp;
+    // } else {
         body.setting.temperature.celsius = temp;
-    }
+    // }
     if (this.useFanSpeed){
         body.setting.fanSpeed = this.useFanSpeed;
     }
@@ -525,11 +527,11 @@ TadoAccessory.prototype._setTargetHeatingOverlay = function(temp) {
     };
     
     body.termination.type = this.tadoMode;
-    if (this.useFahrenheit) {
-        body.setting.temperature.fahrenheit = temp;
-    } else {
+    // if (this.useFahrenheit) {
+    //     body.setting.temperature.fahrenheit = temp;
+    // } else {
         body.setting.temperature.celsius = temp;
-    }
+    // }
     if (this.useFanSpeed){
         body.setting.fanSpeed = this.useFanSpeed;
     }
