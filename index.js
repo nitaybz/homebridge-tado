@@ -99,8 +99,8 @@ TadoAccessory.prototype.getServices = function() {
     this.log("Maximum setpoint " + maxValue);
 
     if (this.useFahrenheit) {
-        minValue = (accessory.minValue - 32) * 5 / 9;
-        maxValue = (accessory.maxValue - 32) * 5 / 9;
+        minValue = Math.round((accessory.minValue - 32) * 5 / 9);
+        maxValue = Math.round((accessory.maxValue - 32) * 5 / 9);
     }
 
     var informationService = new Service.AccessoryInformation()
@@ -478,7 +478,7 @@ TadoAccessory.prototype._setOverlay = function(body) {
     
     if (body != null) {
         body = JSON.stringify(body);
-        //accessory.log("zone: " + accessory.zone + ",  body: " + body);
+        accessory.log("zone: " + accessory.zone + ",  body: " + body);
     }
     
     https.request(options, null).end(body);  
@@ -497,11 +497,11 @@ TadoAccessory.prototype._setTargetCoolingOverlay = function(temp) {
         } 
     };
     body.termination.type = this.tadoMode;
-    // if (this.useFahrenheit) {
-    //     body.setting.temperature.celsius = temp;
-    // } else {
+    if (this.useFahrenheit) {
+        body.setting.temperature.fahrenheit = temp;
+    } else {
         body.setting.temperature.celsius = temp;
-    // }
+    }
     if (this.useFanSpeed){
         body.setting.fanSpeed = this.useFanSpeed;
     }
@@ -527,11 +527,11 @@ TadoAccessory.prototype._setTargetHeatingOverlay = function(temp) {
     };
     
     body.termination.type = this.tadoMode;
-    // if (this.useFahrenheit) {
-    //     body.setting.temperature.fahrenheit = temp;
-    // } else {
+    if (this.useFahrenheit) {
+        body.setting.temperature.fahrenheit = temp;
+    } else {
         body.setting.temperature.celsius = temp;
-    // }
+    }
     if (this.useFanSpeed){
         body.setting.fanSpeed = this.useFanSpeed;
     }
