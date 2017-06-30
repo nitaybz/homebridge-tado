@@ -94,13 +94,14 @@ TadoAccessory.prototype.getServices = function() {
     var minValue = accessory.minValue;
     var maxValue = accessory.maxValue;
 
+
+    this.log("Minimum setpoint " + minValue);
+    this.log("Maximum setpoint " + maxValue);
+
     if (this.useFahrenheit) {
         minValue = (accessory.minValue - 32) * 5 / 9;
         maxValue = (accessory.maxValue - 32) * 5 / 9;
     }
-
-    this.log("Minimum setpoint " + minValue);
-    this.log("Maximum setpoint " + maxValue);
 
     var informationService = new Service.AccessoryInformation()
         .setCharacteristic(Characteristic.Manufacturer, 'Tado GmbH')
@@ -496,11 +497,11 @@ TadoAccessory.prototype._setTargetCoolingOverlay = function(temp) {
         } 
     };
     body.termination.type = this.tadoMode;
-    if (this.useFahrenheit) {
-        body.setting.temperature.fahrenheit = temp;
-    } else {
+    // if (this.useFahrenheit) {
+    //     body.setting.temperature.celsius = temp;
+    // } else {
         body.setting.temperature.celsius = temp;
-    }
+    // }
     if (this.useFanSpeed){
         body.setting.fanSpeed = this.useFanSpeed;
     }
@@ -526,11 +527,11 @@ TadoAccessory.prototype._setTargetHeatingOverlay = function(temp) {
     };
     
     body.termination.type = this.tadoMode;
-    if (this.useFahrenheit) {
-        body.setting.temperature.fahrenheit = temp;
-    } else {
+    // if (this.useFahrenheit) {
+    //     body.setting.temperature.fahrenheit = temp;
+    // } else {
         body.setting.temperature.celsius = temp;
-    }
+    // }
     if (this.useFanSpeed){
         body.setting.fanSpeed = this.useFanSpeed;
     }
