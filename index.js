@@ -41,7 +41,7 @@ function TadoAccessory(log, config) {
         if (this.useFahrenheit) {
             this.lastTemp = 25 * 9 / 5 + 32;
         }
-        this.storage.setItem(this.name + "_lastTemp", 25);
+        this.storage.setItem(this.name + "_lastTemp", this.lastTemp);
     }
    
     
@@ -395,7 +395,7 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
             }
             else if (accessory.useFahrenheit) {
                     accessory.log("Target temperature is " + obj.setting.temperature.fahrenheit + "ºF");
-                    accessory.storage.setItem(accessory.name + "_lastTemp", obj.setting.temperature.fahrenheit);
+                    accessory.storage.setItem(accessory.name + "_lastTemp", obj.setting.temperature.celsius);
                     callback(null, obj.setting.temperature.celsius);
             } else {
                     accessory.log("Target temperature is " + obj.setting.temperature.celsius + "ºC");
