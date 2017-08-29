@@ -439,7 +439,7 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
 TadoAccessory.prototype.setTargetTemperature = function(temp, callback) {
     var accessory = this;
     accessory.lastMode = accessory.storage.getItem(accessory.name);
-    setTimout(function(){
+    setTimeout(function(){
         if (temp !== null && !accessory.setToOff) {
             if (accessory.useFahrenheit) {
                 accessory.log("Set target temperature to " + Math.round(temp*9/5+32) + "º");
