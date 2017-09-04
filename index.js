@@ -29,6 +29,7 @@ function TadoAccessory(log, config) {
     this.useFanSpeed = config['useFanSpeed'] || false; // can get values: "LOW", "MIDDLE", "HIGH" or "AUTO" depend on your aircon
     this.tadoMode = config['tadoMode'] || "MANUAL";
     this.zoneMode = "UNKNOWN";
+    this.setToOff = false;
     
     //Init storage
       this.storage.initSync({
@@ -49,7 +50,7 @@ function TadoAccessory(log, config) {
     
     //Get Token
      var tokenOptions = {
-            host: 'my.tado.com',
+            host: 'auth.tado.com',
             path: '/oauth/token?client_id=tado-web-app&client_secret=wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc&grant_type=password&password=' + this.password + '&scope=home.user&username=' + this.username,
             method: 'POST'
     };
@@ -59,7 +60,7 @@ function TadoAccessory(log, config) {
             strData += chunk;
         });
         response.on('end', function() {
-            //accessory.log("strData:" + strData);
+            accessory.log("strData:" + strData);
             try {
                 var tokenObj = JSON.parse(strData);
             }
@@ -272,7 +273,10 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     accessory.lastMode = accessory.storage.getItem(accessory.name);
     if (state === 0) {
         accessory.log("Set target state to off");
-
+        accessory.setToOff = true;
+        setTimeout(function(){
+            accessory.setToOff = false
+        }, 5000)
         var body = {
             "termination": {
             },
@@ -289,6 +293,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     else if (state === 1) {
         accessory.log("Force heating");
         accessory.storage.setItem(accessory.name, "HEAT");
+        accessory.setToOff = false
         if (accessory.useFahrenheit){
                 accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
             } else {
@@ -300,6 +305,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
     else if (state === 2) {
             accessory.log("Force cooling");
             accessory.storage.setItem(accessory.name, "COOL");
+            accessory.setToOff = false
             if (accessory.useFahrenheit){
                 accessory.service.setCharacteristic(Characteristic.TargetTemperature, Math.round((accessory.lastTemp - 32) * 5 / 9));
             } else {
@@ -310,13 +316,17 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
 
     else if (state === 3) {
             accessory.log("Automatic control");
+            accessory.setToOff = false
             accessory._setOverlay(null);
             accessory.service.setCharacteristic(Characteristic.CurrentHeatingCoolingState, Characteristic.CurrentHeatingCoolingState.AUTO);  
     }
     
     else if (state === false) {
         accessory.log("Set target state to off");
-
+        accessory.setToOff = true;
+        setTimeout(function(){
+            accessory.setToOff = false
+        }, 5000)
         var body = {
             "termination": {
             },
@@ -334,6 +344,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
         switch (accessory.lastMode) {
             case "HEAT":
                 accessory.log("Turn ON with Heating");
+                accessory.setToOff = false
                 //accessory.storage.setItem(accessory.name, "HEAT");
                 // accessory._setTargetHeatingOverlay(accessory.lastTemp);
                 if (accessory.useFahrenheit){
@@ -345,6 +356,7 @@ TadoAccessory.prototype.setTargetHeatingCoolingState = function(state, callback)
 
             case "COOL":
                 accessory.log("Turn ON with Cooling");
+                accessory.setToOff = false
                 //accessory.storage.setItem(accessory.name, "COOL");
                 // accessory._setTargetCoolingOverlay(accessory.lastTemp);
                 if (accessory.useFahrenheit){
@@ -427,25 +439,29 @@ TadoAccessory.prototype.getTargetTemperature = function(callback) {
 TadoAccessory.prototype.setTargetTemperature = function(temp, callback) {
     var accessory = this;
     accessory.lastMode = accessory.storage.getItem(accessory.name);
-    if (temp !== null) {
-        if (accessory.useFahrenheit) {
-            accessory.log("Set target temperature to " + Math.round(temp*9/5+32) + "º");
-            accessory.storage.setItem(accessory.name + "_lastTemp", Math.round(temp*9/5+32));
-            temp = Math.round(temp*9/5+32);
-        } else {
-            accessory.log("Set target temperature to " + temp + "º");
-            accessory.storage.setItem(accessory.name + "_lastTemp", temp);
-        }
-        switch (accessory.lastMode) {
-            case "COOL":
-                accessory._setTargetCoolingOverlay(temp);
-                break;
+    setTimeout(function(){
+        if (temp !== null && !accessory.setToOff) {
+            if (accessory.useFahrenheit) {
+                accessory.log("Set target temperature to " + Math.round(temp*9/5+32) + "º");
+                accessory.storage.setItem(accessory.name + "_lastTemp", Math.round(temp*9/5+32));
+                temp = Math.round(temp*9/5+32);
+            } else {
+                accessory.log("Set target temperature to " + temp + "º");
+                accessory.storage.setItem(accessory.name + "_lastTemp", temp);
+            }
+            switch (accessory.lastMode) {
+                case "COOL":
+                    accessory._setTargetCoolingOverlay(temp);
+                    break;
 
-            case "HEAT":
-                accessory._setTargetHeatingOverlay(temp);
-                break;
+                case "HEAT":
+                    accessory._setTargetHeatingOverlay(temp);
+                    break;
+            }
+        } else {
+            accessory.setToOff = false
         }
-    }
+    }, 2000)
     callback(null);
 }
 
@@ -505,7 +521,7 @@ TadoAccessory.prototype._setOverlay = function(body) {
     
     if (body != null) {
         body = JSON.stringify(body);
-        accessory.log("zone: " + accessory.zone + ",  body: " + body);
+        //accessory.log("zone: " + accessory.zone + ",  body: " + body);
     }
     
     https.request(options, null).end(body);  
