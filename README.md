@@ -1,17 +1,26 @@
-homebridge-tado-ac
-==============
+homebridge-tado-ac (V1 - old)
+========================
+
+
+***this version is no longer supported, please use the new [Tado-AC plugin](https://github.com/nitaybz/homebridge-tado-ac)***
 
 Supports triggering Tado Smart AC Control from the HomeBridge platform.
 
 Complies with ```Service.Thermostat```
 
-## Installation
+## Installation (old version)
+
+1. Install homebridge using: `sudo npm install -g homebridge`
+2. Install this plugin using: `sudo npm install -g https://github.com/nitaybz/homebridge-tado-ac-old`
+3. Update your configuration file. See `sample-config.json` in this repository for a sample.
+
+## Installation (new version)
 
 1. Install homebridge using: `sudo npm install -g homebridge`
 2. Install this plugin using: `sudo npm install -g homebridge-tado-ac`
 3. Update your configuration file. See `sample-config.json` in this repository for a sample.
 
-**install from git (latest version): `sudo npm install -g https://github.com/nitaybz/homebridge-tado-ac.git`
+**install latest version from git: `sudo npm install -g https://github.com/nitaybz/homebridge-tado-ac`**
 
 ## Config file
 
